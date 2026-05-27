@@ -1,6 +1,7 @@
 export interface ParsedMetrics {
     pain?: number;
     meds?: number;
+    updatedAt?: string;
 }
 
 export function parseMetricsFromText(text: string): ParsedMetrics {

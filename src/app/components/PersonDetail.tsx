@@ -8,15 +8,36 @@ export function PersonDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [showCheckIn, setShowCheckIn] = useState(false);
-  const [, setRefresh] = useState(0);
+  const [metrics, setMetrics] = useState<any>({ pain: 2, meds: 3, medsMax: 4, updatedAt: null });
 
   useEffect(() => {
-    // Force refresh if metrics were updated from storage
-    const handleStorageChange = () => {
-      setRefresh(prev => prev + 1);
+    // Load stored metrics from localStorage
+    const stored = getMetricsFromStorage('sheila');
+    if (stored) {
+      setMetrics({
+        pain: stored.pain || 2,
+        meds: stored.meds || 3,
+        medsMax: 4,
+        updatedAt: stored.updatedAt,
+      });
+    }
+
+    // Listen for metrics updates
+    const handleMetricsUpdated = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail?.personId === 'sheila') {
+        const newMetrics = customEvent.detail?.metrics;
+        setMetrics({
+          pain: newMetrics?.pain || 2,
+          meds: newMetrics?.meds || 3,
+          medsMax: 4,
+          updatedAt: newMetrics?.updatedAt,
+        });
+      }
     };
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+
+    window.addEventListener('metricsUpdated', handleMetricsUpdated);
+    return () => window.removeEventListener('metricsUpdated', handleMetricsUpdated);
   }, []);
 
   return (
@@ -93,7 +114,7 @@ export function PersonDetail() {
                 <Droplet className="w-4 h-4 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">PAIN</span>
               </div>
-              <div className="text-3xl font-medium mb-1">2<span className="text-lg text-muted-foreground">/10</span></div>
+              <div className="text-3xl font-medium mb-1">{metrics.pain}<span className="text-lg text-muted-foreground">/10</span></div>
               <div className="text-xs text-muted-foreground">baseline range</div>
             </div>
 
@@ -102,8 +123,8 @@ export function PersonDetail() {
                 <Pill className="w-4 h-4 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">MEDS TODAY</span>
               </div>
-              <div className="text-3xl font-medium mb-1">3<span className="text-lg text-muted-foreground">/4</span></div>
-              <div className="text-xs text-muted-foreground">1 due 6pm</div>
+              <div className="text-3xl font-medium mb-1">{metrics.meds}<span className="text-lg text-muted-foreground">/{metrics.medsMax}</span></div>
+              <div className="text-xs text-muted-foreground">{metrics.medsMax - metrics.meds} due later</div>
             </div>
 
             <div className="surface-card p-4 rounded-xl">
@@ -115,6 +136,12 @@ export function PersonDetail() {
               <div className="text-xs text-muted-foreground">Oura</div>
             </div>
           </div>
+
+          {metrics.updatedAt && (
+            <p className="text-xs text-muted-foreground mb-6 text-center">
+              Metrics updated {new Date(metrics.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </p>
+          )}
 
           <div className="mb-6">
             <h2 className="section-label mb-3">
@@ -165,7 +192,7 @@ export function PersonDetail() {
           personId="sheila"
           personName="Sheila Marsh"
           onClose={() => setShowCheckIn(false)}
-          onUpdate={() => setRefresh(prev => prev + 1)}
+          onUpdate={() => {}}
         />
       )}
     </div>

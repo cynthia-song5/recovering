@@ -1,6 +1,32 @@
 import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router';
 
+const getMetricColor = (metricKey: string, value: any, max: number): string => {
+  if (metricKey === 'pain' && typeof value === 'number') {
+    return value > 5 ? 'text-yellow-600' : 'text-foreground';
+  }
+  if (metricKey === 'meds' && typeof value === 'number') {
+    return value !== max ? 'text-red-600' : 'text-green-600';
+  }
+  if (metricKey === 'sleep' && typeof value === 'string') {
+    const hours = parseInt(value);
+    if (hours >= 7) return 'text-green-600';
+    if (hours >= 6) return 'text-yellow-600';
+    return 'text-red-600';
+  }
+  if (metricKey === 'glucose' && typeof value === 'number') {
+    if (value <= max * 0.85) return 'text-green-600';
+    if (value <= max) return 'text-yellow-600';
+    return 'text-red-600';
+  }
+  if (metricKey === 'peak_flow' && typeof value === 'number') {
+    if (value >= max * 0.9) return 'text-green-600';
+    if (value >= max * 0.8) return 'text-yellow-600';
+    return 'text-red-600';
+  }
+  return 'text-foreground';
+};
+
 const careCircles = [
   {
     id: 'sheila',
@@ -8,10 +34,8 @@ const careCircles = [
     bgColor: '#f5e6d3',
     textColor: '#8b6f47',
     name: 'Sheila Marsh',
-    relation: 'Grandma',
+    relation: 'Mom',
     age: 78,
-    status: 'Needs attention',
-    statusColor: 'warning',
     alert: 'Missed evening meds last night · 9:00pm',
     condition: 'Day 4 post-op · Hip replacement',
     metrics: {
@@ -29,9 +53,13 @@ const careCircles = [
     name: 'Robert Johnson',
     relation: 'Dad',
     age: 74,
-    status: 'Stable',
     condition: 'Type 2 diabetes · ongoing',
     alert: '1 task unclaimed — pharmacy pickup by 6pm',
+    metrics: {
+      glucose: { value: 118, max: 140, label: 'GLUCOSE' },
+      meds: { value: 4, max: 4, label: 'MEDS' },
+      sleep: { value: '6h 45m', label: 'SLEEP' },
+    },
     updated: '1h ago',
   },
   {
@@ -40,10 +68,14 @@ const careCircles = [
     bgColor: '#d4e0ed',
     textColor: '#4a6b8a',
     name: 'Margaret Johnson',
-    relation: 'Mom',
-    age: 62,
-    status: 'Stable',
-    condition: 'Recovering from knee surgery',
+    relation: 'Daughter',
+    age: 12,
+    condition: 'Chronic asthma',
+    metrics: {
+      peak_flow: { value: 380, max: 400, label: 'PEAK FLOW' },
+      meds: { value: 3, max: 3, label: 'MEDS' },
+      sleep: { value: '8h 15m', label: 'SLEEP' },
+    },
     updated: '3h ago',
   },
 ];
@@ -54,9 +86,9 @@ export function HomeScreen() {
       <div className="screen-frame px-5 pt-12">
         <div className="flex items-start justify-between mb-2">
           <div>
-            <h1 className="text-[32px] leading-tight">
+            <h1 className="text-[40px] leading-tight font-light tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
               Good morning,<br />
-              <span className="italic" style={{ fontFamily: 'Georgia, serif' }}>Sarah</span>
+              <span className="font-medium">Sarah</span>
             </h1>
           </div>
           <div className="initial-badge w-10 h-10 bg-muted mt-1">
@@ -95,16 +127,6 @@ export function HomeScreen() {
                         {circle.relation} · {circle.age} yrs
                       </p>
                     </div>
-                    <span
-                      className={`status-pill ${
-                        circle.statusColor === 'warning'
-                          ? 'status-pill-warning'
-                          : 'status-pill-stable'
-                      }`}
-                    >
-                      <span className="status-pill-dot" />
-                      {circle.status}
-                    </span>
                   </div>
                 </div>
               </div>
@@ -113,30 +135,16 @@ export function HomeScreen() {
 
               {circle.metrics && (
                 <div className="surface-subtle p-3 mb-3 flex justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="text-2xl font-medium mb-0.5">
-                      {circle.metrics.pain.value}/{circle.metrics.pain.max}
+                  {Object.entries(circle.metrics).map(([key, metric]) => (
+                    <div key={key} className="flex-1">
+                      <div className={`text-2xl font-medium mb-0.5 ${getMetricColor(key, metric.value, metric.max)}`}>
+                        {metric.value}{metric.max ? `/${metric.max}` : ''}
+                      </div>
+                      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                        {metric.label}
+                      </div>
                     </div>
-                    <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                      {circle.metrics.pain.label}
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-2xl font-medium mb-0.5">
-                      {circle.metrics.meds.value}/{circle.metrics.meds.max}
-                    </div>
-                    <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                      {circle.metrics.meds.label}
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-2xl font-medium mb-0.5">
-                      {circle.metrics.sleep.value}
-                    </div>
-                    <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                      {circle.metrics.sleep.label}
-                    </div>
-                  </div>
+                  ))}
                 </div>
               )}
 

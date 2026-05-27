@@ -1,6 +1,6 @@
 import { ChevronLeft, Send, CheckCheck } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router';
 
 type CircleMessage = {
   id: number;
@@ -20,17 +20,18 @@ type CircleMessage = {
 
 export function CircleScreen() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const initialMessages: CircleMessage[] = [
     {
       id: 1,
-      sender: 'Nina',
-      initials: 'NI',
-      bgColor: '#f5e6d3',
-      textColor: '#8b6f47',
-      message: 'Thank you Nina ❤️ Brief looks good this morning.',
+      sender: "Sheila's care assistant",
+      initials: 'SA',
+      bgColor: '#e8e4df',
+      textColor: '#757575',
+      message: "Good morning circle. Here's today's brief for Sheila.",
       time: '9:02am',
-      type: 'user',
+      type: 'assistant',
     },
     {
       id: 2,
@@ -82,6 +83,23 @@ export function CircleScreen() {
   const [messages, setMessages] = useState<CircleMessage[]>(initialMessages);
   const [draft, setDraft] = useState('');
   const [isSending, setIsSending] = useState(false);
+
+  useEffect(() => {
+    const state = location.state as { brief?: string; personName?: string } | null;
+    if (state?.brief) {
+      const briefMessage: CircleMessage = {
+        id: Date.now(),
+        sender: 'Sarah',
+        initials: 'SC',
+        bgColor: '#f5e6d3',
+        textColor: '#8b6f47',
+        message: state.brief,
+        time: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase(),
+        type: 'user',
+      };
+      setMessages((current) => [...current, briefMessage]);
+    }
+  }, [location.state]);
 
   const formatTime = () => {
     const now = new Date();

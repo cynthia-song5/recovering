@@ -49,7 +49,18 @@ export function PersonDetail() {
             </div>
 
             <div className="mt-4 flex gap-2">
-              <button className="flex-1 bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium shadow-sm">
+              <button
+                onClick={() =>
+                  navigate('/circle', {
+                    state: {
+                      brief:
+                        "Sheila had a restful night. PT at 10am went well — walked 40ft with the walker, pain held at 2/10. Wound clean per Nina's morning check. All meds on time; enoxaparin due 6pm. Resting HR is 6-9 bpm above baseline for 4 days.",
+                      personName: 'Sheila Marsh',
+                    },
+                  })
+                }
+                className="flex-1 bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium shadow-sm hover:shadow-md transition-shadow"
+              >
                 Share with circle
               </button>
               <button

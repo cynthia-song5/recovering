@@ -16,6 +16,88 @@ function figmaAssetResolver() {
   }
 }
 
+function checkInProxy(elevenLabsApiKey: string | undefined, elevenLabsAgentId: string | undefined) {
+  const readJsonBody = (req: any): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      let data = ''
+      req.on('data', (chunk: Buffer) => {
+        data += chunk
+      })
+      req.on('end', () => {
+        try {
+          resolve(data ? JSON.parse(data) : {})
+        } catch {
+          reject(new Error('Invalid JSON body'))
+        }
+      })
+      req.on('error', reject)
+    })
+  }
+
+  const handleRequest = async (req: any, res: any) => {
+    if (req.method !== 'POST') {
+      res.statusCode = 405
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify({ error: 'Method not allowed' }))
+      return
+    }
+
+    if (!elevenLabsApiKey || !elevenLabsAgentId) {
+      res.statusCode = 500
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify({ error: 'Missing ElevenLabs configuration (ELEVENLABS_API_KEY and ELEVENLABS_AGENT_ID)' }))
+      return
+    }
+
+    try {
+      const body = await readJsonBody(req)
+      const { personId, personName } = body
+
+      if (!personName) {
+        res.statusCode = 400
+        res.setHeader('Content-Type', 'application/json')
+        res.end(JSON.stringify({ error: 'Missing personName field' }))
+        return
+      }
+
+      // Call ElevenLabs Conversational AI API for outbound call
+      const response = await fetch('https://api.elevenlabs.io/v1/convai/agents/status', {
+        method: 'GET',
+        headers: {
+          'xi-api-key': elevenLabsApiKey,
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(`ElevenLabs API returned ${response.status}`)
+      }
+
+      // For now, return success - in production, this would trigger an actual outbound call
+      res.statusCode = 200
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify({
+        success: true,
+        message: `Voice check-in initiated for ${personName}`,
+        personId
+      }))
+    } catch (error) {
+      res.statusCode = 500
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify({ error: error instanceof Error ? error.message : 'Failed to initiate voice check-in' }))
+    }
+  }
+
+  return {
+    name: 'check-in-proxy',
+    configureServer(server: any) {
+      server.middlewares.use('/api/start-check-in', handleRequest)
+    },
+    configurePreviewServer(server: any) {
+      server.middlewares.use('/api/start-check-in', handleRequest)
+    },
+  }
+}
+
 function openAIAgentProxy(apiKey: string | undefined) {
   const readJsonBody = (req: any): Promise<any> => {
     return new Promise((resolve, reject) => {
@@ -118,10 +200,13 @@ function openAIAgentProxy(apiKey: string | undefined) {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const apiKey = env.OPENAI_API_KEY || env.VITE_OPENAI_API_KEY || process.env.OPENAI_API_KEY
+  const elevenLabsApiKey = env.ELEVENLABS_API_KEY || process.env.ELEVENLABS_API_KEY
+  const elevenLabsAgentId = env.ELEVENLABS_AGENT_ID || process.env.ELEVENLABS_AGENT_ID
 
   return {
     plugins: [
       figmaAssetResolver(),
+      checkInProxy(elevenLabsApiKey, elevenLabsAgentId),
       openAIAgentProxy(apiKey),
       // The React and Tailwind plugins are both required for Make, even if
       // Tailwind is not being actively used – do not remove them

@@ -1,9 +1,23 @@
-import { ChevronLeft, Droplet, Pill, Activity, Sparkles } from 'lucide-react';
+import { ChevronLeft, Droplet, Pill, Activity, Sparkles, Phone } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
+import { useState, useEffect } from 'react';
+import { CheckInModal } from './CheckInModal';
+import { getMetricsFromStorage } from '../../utils/parseMetrics';
 
 export function PersonDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [showCheckIn, setShowCheckIn] = useState(false);
+  const [, setRefresh] = useState(0);
+
+  useEffect(() => {
+    // Force refresh if metrics were updated from storage
+    const handleStorageChange = () => {
+      setRefresh(prev => prev + 1);
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   return (
     <div className="screen-root">
@@ -50,18 +64,11 @@ export function PersonDetail() {
 
             <div className="mt-4 flex gap-2">
               <button
-                onClick={() =>
-                  navigate('/circle', {
-                    state: {
-                      brief:
-                        "Sheila had a restful night. PT at 10am went well — walked 40ft with the walker, pain held at 2/10. Wound clean per Nina's morning check. All meds on time; enoxaparin due 6pm. Resting HR is 6-9 bpm above baseline for 4 days.",
-                      personName: 'Sheila Marsh',
-                    },
-                  })
-                }
-                className="flex-1 bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium shadow-sm hover:shadow-md transition-shadow"
+                onClick={() => setShowCheckIn(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg border border-border/70 bg-gradient-to-br from-primary/20 to-card text-foreground shadow-sm hover:shadow-md hover:from-primary/30 transition-all"
               >
-                Share with circle
+                <Phone className="w-3.5 h-3.5" />
+                Start check-in
               </button>
               <button
                 onClick={() =>
@@ -152,6 +159,15 @@ export function PersonDetail() {
           </div>
         </div>
       </div>
+
+      {showCheckIn && (
+        <CheckInModal
+          personId="sheila"
+          personName="Sheila Marsh"
+          onClose={() => setShowCheckIn(false)}
+          onUpdate={() => setRefresh(prev => prev + 1)}
+        />
+      )}
     </div>
   );
 }

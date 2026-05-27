@@ -1,5 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router';
+import { useState, useEffect } from 'react';
+import { getMetricsFromStorage } from '../../utils/parseMetrics';
 
 const getMetricColor = (metricKey: string, value: any, max: number): string => {
   if (metricKey === 'pain' && typeof value === 'number') {
@@ -81,6 +83,76 @@ const careCircles = [
 ];
 
 export function HomeScreen() {
+  const [circles, setCircles] = useState<any>(careCircles);
+
+  useEffect(() => {
+    // Load stored metrics from localStorage
+    const updatedCircles = careCircles.map(circle => {
+      const stored = getMetricsFromStorage(circle.id);
+      if (!stored) return circle;
+
+      const updatedMetrics = { ...circle.metrics };
+      
+      // Update pain if stored
+      if (stored.pain !== undefined && updatedMetrics.pain) {
+        updatedMetrics.pain = { ...updatedMetrics.pain, value: stored.pain };
+      }
+      
+      // Update meds if stored
+      if (stored.meds !== undefined && updatedMetrics.meds) {
+        updatedMetrics.meds = { ...updatedMetrics.meds, value: stored.meds };
+      }
+
+      return {
+        ...circle,
+        metrics: updatedMetrics,
+        updated: 'just now',
+      };
+    });
+
+    setCircles(updatedCircles);
+  }, []);
+
+  useEffect(() => {
+    // Listen for storage changes from other tabs/windows and custom events from same tab
+    const handleStorageChange = () => {
+      const updatedCircles = careCircles.map(circle => {
+        const stored = getMetricsFromStorage(circle.id);
+        if (!stored) return circle;
+
+        const updatedMetrics = { ...circle.metrics };
+        
+        if (stored.pain !== undefined && updatedMetrics.pain) {
+          updatedMetrics.pain = { ...updatedMetrics.pain, value: stored.pain };
+        }
+        
+        if (stored.meds !== undefined && updatedMetrics.meds) {
+          updatedMetrics.meds = { ...updatedMetrics.meds, value: stored.meds };
+        }
+
+        return {
+          ...circle,
+          metrics: updatedMetrics,
+          updated: 'just now',
+        };
+      });
+
+      setCircles(updatedCircles);
+    };
+
+    const handleMetricsUpdated = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      handleStorageChange();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('metricsUpdated', handleMetricsUpdated);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('metricsUpdated', handleMetricsUpdated);
+    };
+  }, []);
+
   return (
     <div className="screen-root">
       <div className="screen-frame px-5 pt-12">
@@ -105,7 +177,7 @@ export function HomeScreen() {
             Your care circles
           </h2>
 
-          {careCircles.map((circle) => (
+          {circles.map((circle: any) => (
             <Link
               key={circle.id}
               to={`/person/${circle.id}`}
@@ -135,13 +207,13 @@ export function HomeScreen() {
 
               {circle.metrics && (
                 <div className="surface-subtle p-3 mb-3 flex justify-between gap-4">
-                  {Object.entries(circle.metrics).map(([key, metric]) => (
+                  {Object.entries(circle.metrics).map(([key, metric]: any) => (
                     <div key={key} className="flex-1">
-                      <div className={`text-2xl font-medium mb-0.5 ${getMetricColor(key, metric.value, metric.max)}`}>
-                        {metric.value}{metric.max ? `/${metric.max}` : ''}
+                      <div className={`text-2xl font-medium mb-0.5 ${getMetricColor(key, (metric as any).value, (metric as any).max)}`}>
+                        {(metric as any).value}{(metric as any).max ? `/${(metric as any).max}` : ''}
                       </div>
                       <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                        {metric.label}
+                        {(metric as any).label}
                       </div>
                     </div>
                   ))}

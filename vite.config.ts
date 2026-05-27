@@ -61,15 +61,23 @@ function checkInProxy(elevenLabsApiKey: string | undefined, elevenLabsAgentId: s
       }
 
       // Call ElevenLabs Conversational AI API for outbound call
-      const response = await fetch('https://api.elevenlabs.io/v1/convai/agents/status', {
-        method: 'GET',
+      const phoneNumber = '+13179792383'
+      const response = await fetch(`https://api.elevenlabs.io/v1/convai/agents/${elevenLabsAgentId}/outbound-call`, {
+        method: 'POST',
         headers: {
           'xi-api-key': elevenLabsApiKey,
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          phone_number: phoneNumber,
+          first_message: `Hi ${personName}, this is a quick check-in call. Can you tell me your current pain level on a scale of 1-10, and how many medications have you taken today?`,
+        }),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error(`ElevenLabs API returned ${response.status}`)
+        throw new Error(data?.error?.message || `ElevenLabs API returned ${response.status}`)
       }
 
       // For now, return success - in production, this would trigger an actual outbound call
@@ -78,6 +86,7 @@ function checkInProxy(elevenLabsApiKey: string | undefined, elevenLabsAgentId: s
       res.end(JSON.stringify({
         success: true,
         message: `Voice check-in initiated for ${personName}`,
+        callId: data.call_id || data.id,
         personId
       }))
     } catch (error) {

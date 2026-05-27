@@ -54,14 +54,9 @@ export function CheckInModal({ personId, personName, onClose, onUpdate }: CheckI
       const data = await response.json();
       
       // Show success and close
-      setSuccess('Voice check-in initiated. You will receive a call shortly.');
+      setSuccess('Voice check-in initiated. A call will be placed to +1 317-979-2383.');
       
       setTimeout(() => {
-        // Check if metrics were extracted from the call
-        const savedMetrics = localStorage.getItem(`metrics_${personId}`);
-        if (savedMetrics) {
-          onUpdate();
-        }
         onClose();
       }, 2000);
     } catch (err) {
@@ -161,7 +156,7 @@ export function CheckInModal({ personId, personName, onClose, onUpdate }: CheckI
         {mode === 'voice' && (
           <div>
             <p className="text-sm text-muted-foreground mb-6">
-              A voice call will be initiated to {personName}. The call will ask about current pain level and medication adherence. Metrics will be automatically extracted and updated.
+              A voice call will be initiated to <span className="font-medium">+1 317-979-2383</span>. The call will ask about current pain level and medication adherence. You may need to manually enter the summary after the call.
             </p>
 
             {error && (

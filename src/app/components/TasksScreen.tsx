@@ -1,8 +1,59 @@
 import { ChevronLeft, Droplet, Pill, Camera, Sparkles } from 'lucide-react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
+
+type Assignee = {
+  id: string;
+  name: string;
+  initials: string;
+  bgColor: string;
+  textColor: string;
+};
+
+const ASSIGNEES: Assignee[] = [
+  { id: 'sarah', name: 'Sarah', initials: 'SC', bgColor: '#f5e6d3', textColor: '#8b6f47' },
+  { id: 'james', name: 'James', initials: 'JM', bgColor: '#d4e8d4', textColor: '#4a7c59' },
+  { id: 'nina', name: 'Nina', initials: 'NI', bgColor: '#d4e0ed', textColor: '#4a6b8a' },
+];
+
+const DEFAULT_ASSIGNEE_ID = 'sarah';
 
 export function TasksScreen() {
   const navigate = useNavigate();
+  const [claimedTasks, setClaimedTasks] = useState<Record<string, string | undefined>>({});
+  const [openPickerTaskId, setOpenPickerTaskId] = useState<string | null>(null);
+
+  const claimTask = (taskId: string, assigneeId: string = DEFAULT_ASSIGNEE_ID) => {
+    setClaimedTasks((current) => ({ ...current, [taskId]: assigneeId }));
+  };
+
+  const handleClaim = (taskId: string) => {
+    claimTask(taskId, DEFAULT_ASSIGNEE_ID);
+    setOpenPickerTaskId(null);
+  };
+
+  const unclaimTask = (taskId: string) => {
+    setClaimedTasks((current) => ({ ...current, [taskId]: undefined }));
+  };
+
+  const updateAssignee = (taskId: string, assigneeId: string) => {
+    if (assigneeId === 'unclaimed') {
+      unclaimTask(taskId);
+      setOpenPickerTaskId(null);
+      return;
+    }
+
+    claimTask(taskId, assigneeId);
+    setOpenPickerTaskId(null);
+  };
+
+  const getAssignee = (taskId: string) => {
+    const assigneeId = claimedTasks[taskId];
+    return ASSIGNEES.find((assignee) => assignee.id === assigneeId);
+  };
+
+  const painLogAssignee = getAssignee('pain-log');
+  const transportAssignee = getAssignee('pt-transport');
 
   return (
     <div className="screen-root">
@@ -87,9 +138,46 @@ export function TasksScreen() {
                     <h3 className="text-sm font-medium mb-1">Send pain log to care team</h3>
                     <p className="text-xs text-muted-foreground">by 5pm</p>
                   </div>
-                  <button className="bg-primary text-primary-foreground rounded-lg px-4 py-1.5 text-xs font-medium shadow-sm">
-                    Claim
-                  </button>
+                  {painLogAssignee ? (
+                    <div className="flex flex-col items-end gap-2">
+                      <button
+                        onClick={() => setOpenPickerTaskId((current) => (current === 'pain-log' ? null : 'pain-log'))}
+                        className="flex items-center gap-2"
+                      >
+                        <div
+                          className="initial-badge w-7 h-7 text-xs"
+                          style={{
+                            backgroundColor: painLogAssignee.bgColor,
+                            color: painLogAssignee.textColor,
+                          }}
+                        >
+                          {painLogAssignee.initials}
+                        </div>
+                        <span className="text-xs text-muted-foreground">{painLogAssignee.name}</span>
+                      </button>
+                      {openPickerTaskId === 'pain-log' && (
+                        <select
+                          value={painLogAssignee.id}
+                          onChange={(event) => updateAssignee('pain-log', event.target.value)}
+                          className="text-[11px] rounded-md border border-border bg-card px-2 py-1 text-muted-foreground"
+                        >
+                          {ASSIGNEES.map((assignee) => (
+                            <option key={assignee.id} value={assignee.id}>
+                              {assignee.name}
+                            </option>
+                          ))}
+                          <option value="unclaimed">Unclaimed</option>
+                        </select>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleClaim('pain-log')}
+                      className="bg-primary text-primary-foreground rounded-lg px-4 py-1.5 text-xs font-medium shadow-sm"
+                    >
+                      Claim
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -104,9 +192,46 @@ export function TasksScreen() {
                     </div>
                     <p className="text-xs text-muted-foreground">by tomorrow</p>
                   </div>
-                  <button className="bg-primary text-primary-foreground rounded-lg px-4 py-1.5 text-xs font-medium shadow-sm">
-                    Claim
-                  </button>
+                  {transportAssignee ? (
+                    <div className="flex flex-col items-end gap-2">
+                      <button
+                        onClick={() => setOpenPickerTaskId((current) => (current === 'pt-transport' ? null : 'pt-transport'))}
+                        className="flex items-center gap-2"
+                      >
+                        <div
+                          className="initial-badge w-7 h-7 text-xs"
+                          style={{
+                            backgroundColor: transportAssignee.bgColor,
+                            color: transportAssignee.textColor,
+                          }}
+                        >
+                          {transportAssignee.initials}
+                        </div>
+                        <span className="text-xs text-muted-foreground">{transportAssignee.name}</span>
+                      </button>
+                      {openPickerTaskId === 'pt-transport' && (
+                        <select
+                          value={transportAssignee.id}
+                          onChange={(event) => updateAssignee('pt-transport', event.target.value)}
+                          className="text-[11px] rounded-md border border-border bg-card px-2 py-1 text-muted-foreground"
+                        >
+                          {ASSIGNEES.map((assignee) => (
+                            <option key={assignee.id} value={assignee.id}>
+                              {assignee.name}
+                            </option>
+                          ))}
+                          <option value="unclaimed">Unclaimed</option>
+                        </select>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleClaim('pt-transport')}
+                      className="bg-primary text-primary-foreground rounded-lg px-4 py-1.5 text-xs font-medium shadow-sm"
+                    >
+                      Claim
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

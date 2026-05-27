@@ -1,4 +1,4 @@
-import { ChevronLeft, Droplet, Pill, Activity } from 'lucide-react';
+import { ChevronLeft, Droplet, Pill, Activity, Sparkles } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 
 export function PersonDetail() {
@@ -52,7 +52,18 @@ export function PersonDetail() {
               <button className="flex-1 bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium shadow-sm">
                 Share with circle
               </button>
-              <button className="px-4 py-2 text-sm text-muted-foreground">
+              <button
+                onClick={() =>
+                  navigate('/agent-follow-up', {
+                    state: {
+                      context:
+                        "Sheila Marsh, day 4 post-op hip replacement. Restful night, PT at 10am with 40ft walker distance, pain 2/10, wound clean this morning, all meds on time, enoxaparin due 6pm. Resting HR has stayed 6-9 bpm above baseline for 4 days.",
+                    },
+                  })
+                }
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg border border-border/70 bg-gradient-to-br from-accent/80 to-card text-foreground shadow-sm hover:shadow-md hover:from-accent hover:to-secondary/40 transition-all"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[var(--stable)]" />
                 Ask follow-up
               </button>
             </div>

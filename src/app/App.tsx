@@ -6,6 +6,7 @@ import { VitalsScreen } from './components/VitalsScreen';
 import { DevicesScreen } from './components/DevicesScreen';
 import { CircleScreen } from './components/CircleScreen';
 import { TasksScreen } from './components/TasksScreen';
+import { FollowUpAgentScreen } from './components/FollowUpAgentScreen';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
             <Route path="/devices" element={<DevicesScreen />} />
             <Route path="/circle" element={<CircleScreen />} />
             <Route path="/tasks" element={<TasksScreen />} />
+            <Route path="/agent-follow-up" element={<FollowUpAgentScreen />} />
           </Routes>
           <BottomNav />
         </div>

@@ -1,10 +1,27 @@
 import { ChevronLeft, Send, CheckCheck } from 'lucide-react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
+
+type CircleMessage = {
+  id: number;
+  sender: string;
+  initials: string;
+  bgColor: string;
+  textColor: string;
+  message: string;
+  time: string;
+  type: 'user' | 'assistant' | 'system';
+  task?: {
+    title: string;
+    time: string;
+    assignees: string[];
+  };
+};
 
 export function CircleScreen() {
   const navigate = useNavigate();
 
-  const messages = [
+  const initialMessages: CircleMessage[] = [
     {
       id: 1,
       sender: 'Nina',
@@ -61,6 +78,77 @@ export function CircleScreen() {
       type: 'system',
     },
   ];
+
+  const [messages, setMessages] = useState<CircleMessage[]>(initialMessages);
+  const [draft, setDraft] = useState('');
+  const [isSending, setIsSending] = useState(false);
+
+  const formatTime = () => {
+    const now = new Date();
+    return now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase();
+  };
+
+  const sendMessage = async () => {
+    const text = draft.trim();
+    if (!text || isSending) {
+      return;
+    }
+
+    const userMessage: CircleMessage = {
+      id: Date.now(),
+      sender: 'Sarah',
+      initials: 'SC',
+      bgColor: '#f5e6d3',
+      textColor: '#8b6f47',
+      message: text,
+      time: formatTime(),
+      type: 'user',
+    };
+
+    setMessages((current) => [...current, userMessage]);
+    setDraft('');
+    setIsSending(true);
+
+    try {
+      const response = await fetch('/api/agent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text }),
+      });
+
+      const data = await response.json();
+      const assistantReply = response.ok
+        ? data.reply
+        : data.error || 'I could not respond right now. Please try again.';
+
+      const assistantMessage: CircleMessage = {
+        id: Date.now() + 1,
+        sender: "Sheila's care assistant",
+        initials: 'SA',
+        bgColor: '#e8e4df',
+        textColor: '#757575',
+        message: assistantReply,
+        time: formatTime(),
+        type: 'assistant',
+      };
+
+      setMessages((current) => [...current, assistantMessage]);
+    } catch {
+      const fallbackMessage: CircleMessage = {
+        id: Date.now() + 1,
+        sender: "Sheila's care assistant",
+        initials: 'SA',
+        bgColor: '#e8e4df',
+        textColor: '#757575',
+        message: 'Connection issue. Please try again in a moment.',
+        time: formatTime(),
+        type: 'assistant',
+      };
+      setMessages((current) => [...current, fallbackMessage]);
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   return (
     <div className="h-screen bg-background flex flex-col">
@@ -202,9 +290,22 @@ export function CircleScreen() {
           <input
             type="text"
             placeholder="Message Sheila's circle..."
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                void sendMessage();
+              }
+            }}
             className="flex-1 bg-input-background rounded-full px-5 py-3 text-sm outline-none focus:ring-2 ring-ring/30 transition-all shadow-sm"
           />
-          <button className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-primary/90 text-primary-foreground flex items-center justify-center shadow-md hover:shadow-lg hover:scale-105 transition-all">
+          <button
+            onClick={() => {
+              void sendMessage();
+            }}
+            disabled={isSending || !draft.trim()}
+            className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-primary/90 text-primary-foreground flex items-center justify-center shadow-md hover:shadow-lg hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100"
+          >
             <Send className="w-4 h-4" />
           </button>
         </div>

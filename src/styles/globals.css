@@ -1,0 +1,68 @@
+@layer components {
+	.screen-root {
+		@apply min-h-screen bg-background pb-24;
+	}
+
+	.screen-frame {
+		@apply max-w-md mx-auto;
+	}
+
+	.screen-header {
+		@apply sticky top-0 z-10 px-5 py-4 border-b border-border/50 bg-card/95 backdrop-blur-md shadow-sm;
+	}
+
+	.back-link {
+		@apply flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground;
+	}
+
+	.screen-content {
+		@apply px-5 pt-6;
+	}
+
+	.surface-card {
+		@apply bg-card/95 border border-border/50 shadow-sm rounded-2xl;
+	}
+
+	.surface-card-strong {
+		@apply bg-gradient-to-br from-card to-accent/40 border border-border/40 shadow-md rounded-2xl;
+	}
+
+	.surface-subtle {
+		@apply bg-secondary/55 rounded-xl;
+	}
+
+	.section-label {
+		@apply text-xs uppercase tracking-wide text-muted-foreground;
+	}
+
+	.status-pill {
+		@apply text-xs px-2.5 py-1 rounded-full inline-flex items-center gap-1.5;
+	}
+
+	.status-pill-dot {
+		@apply w-1.5 h-1.5 rounded-full bg-current;
+	}
+
+	.status-pill-stable {
+		color: var(--stable);
+		background-color: var(--stable-bg);
+	}
+
+	.status-pill-warning {
+		color: var(--warning);
+		background-color: var(--warning-bg);
+	}
+
+	.status-pill-alert {
+		color: var(--alert);
+		background-color: var(--alert-bg);
+	}
+
+	.initial-badge {
+		@apply rounded-full flex items-center justify-center font-medium shadow-sm;
+	}
+
+	.app-nav {
+		@apply fixed bottom-0 left-0 right-0 bg-card/98 backdrop-blur-md border-t border-border/50 shadow-[0_-4px_12px_rgba(0,0,0,0.05)];
+	}
+}

@@ -6,31 +6,31 @@ export function PersonDetail() {
   const { id } = useParams();
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <div className="max-w-md mx-auto">
-        <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 px-5 py-4 border-b border-border/50">
+    <div className="screen-root">
+      <div className="screen-frame">
+        <div className="screen-header">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-sm text-muted-foreground"
+            className="back-link"
           >
             <ChevronLeft className="w-4 h-4" />
             Circles
           </button>
         </div>
 
-        <div className="px-5 pt-6">
+        <div className="screen-content">
           <div className="flex items-start justify-between mb-6">
             <div>
               <h1 className="text-2xl font-medium mb-1">Sheila Marsh</h1>
               <p className="text-sm text-muted-foreground">Day 4 post-op · Hip replacement</p>
             </div>
-            <span className="text-xs px-2.5 py-1 rounded-full flex items-center gap-1.5 bg-[var(--stable-bg)] text-[var(--stable)]">
-              <span className="w-1.5 h-1.5 rounded-full bg-current" />
+            <span className="status-pill status-pill-stable">
+              <span className="status-pill-dot" />
               Stable
             </span>
           </div>
 
-          <div className="bg-card rounded-2xl p-4 mb-6 shadow-sm border border-border/50">
+          <div className="surface-card-strong p-4 mb-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="w-2 h-2 rounded-full bg-primary" />
               <span className="text-xs uppercase tracking-wide text-muted-foreground">Daily Brief</span>
@@ -49,7 +49,7 @@ export function PersonDetail() {
             </div>
 
             <div className="mt-4 flex gap-2">
-              <button className="flex-1 bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium">
+              <button className="flex-1 bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium shadow-sm">
                 Share with circle
               </button>
               <button className="px-4 py-2 text-sm text-muted-foreground">
@@ -59,7 +59,7 @@ export function PersonDetail() {
           </div>
 
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <div className="bg-card rounded-xl p-4 border border-border/50">
+            <div className="surface-card p-4 rounded-xl">
               <div className="flex items-center gap-2 mb-2">
                 <Droplet className="w-4 h-4 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">PAIN</span>
@@ -68,7 +68,7 @@ export function PersonDetail() {
               <div className="text-xs text-muted-foreground">baseline range</div>
             </div>
 
-            <div className="bg-card rounded-xl p-4 border border-border/50">
+            <div className="surface-card p-4 rounded-xl">
               <div className="flex items-center gap-2 mb-2">
                 <Pill className="w-4 h-4 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">MEDS TODAY</span>
@@ -77,7 +77,7 @@ export function PersonDetail() {
               <div className="text-xs text-muted-foreground">1 due 6pm</div>
             </div>
 
-            <div className="bg-card rounded-xl p-4 border border-border/50">
+            <div className="surface-card p-4 rounded-xl">
               <div className="flex items-center gap-2 mb-2">
                 <Activity className="w-4 h-4 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">READINESS</span>
@@ -88,17 +88,17 @@ export function PersonDetail() {
           </div>
 
           <div className="mb-6">
-            <h2 className="text-xs uppercase tracking-wide text-muted-foreground mb-3">
+            <h2 className="section-label mb-3">
               Today's schedule
             </h2>
 
             <div className="space-y-2">
-              <div className="bg-card rounded-xl p-4 border border-border/50 flex items-start gap-3">
+              <div className="surface-card p-4 rounded-xl flex items-start gap-3">
                 <div className="text-sm text-muted-foreground min-w-[60px]">10:00</div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
                     <h3 className="text-sm font-medium">PT session</h3>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--stable-bg)] text-[var(--stable)]">
+                    <span className="status-pill status-pill-stable py-0.5 px-2">
                       Done
                     </span>
                   </div>
@@ -106,12 +106,12 @@ export function PersonDetail() {
                 </div>
               </div>
 
-              <div className="bg-card rounded-xl p-4 border border-border/50 flex items-start gap-3">
+              <div className="surface-card p-4 rounded-xl flex items-start gap-3">
                 <div className="text-sm text-muted-foreground min-w-[60px]">14:00</div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
                     <h3 className="text-sm font-medium">Afternoon meds</h3>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--warning-bg)] text-[var(--warning)]">
+                    <span className="status-pill status-pill-warning py-0.5 px-2">
                       Next
                     </span>
                   </div>
@@ -119,7 +119,7 @@ export function PersonDetail() {
                 </div>
               </div>
 
-              <div className="bg-card rounded-xl p-4 border border-border/50 flex items-start gap-3">
+              <div className="surface-card p-4 rounded-xl flex items-start gap-3">
                 <div className="text-sm text-muted-foreground min-w-[60px]">18:00</div>
                 <div className="flex-1">
                   <h3 className="text-sm font-medium">Evening wound check</h3>

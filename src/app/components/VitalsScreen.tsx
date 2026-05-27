@@ -5,34 +5,34 @@ export function VitalsScreen() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <div className="max-w-md mx-auto">
-        <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 px-5 py-4 border-b border-border/50">
+    <div className="screen-root">
+      <div className="screen-frame">
+        <div className="screen-header">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-sm text-muted-foreground"
+            className="back-link"
           >
             <ChevronLeft className="w-4 h-4" />
             Circles
           </button>
         </div>
 
-        <div className="px-5 pt-6">
+        <div className="screen-content">
           <div className="mb-6">
             <h1 className="text-3xl font-medium mb-2" style={{ fontFamily: 'Georgia, serif' }}>
               Vitals
             </h1>
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">via Oura · synced 8:14am · live</p>
-              <span className="text-xs px-2.5 py-1 rounded-full flex items-center gap-1.5 bg-[var(--stable-bg)] text-[var(--stable)]">
-                <span className="w-1.5 h-1.5 rounded-full bg-current" />
+              <span className="status-pill status-pill-stable">
+                <span className="status-pill-dot" />
                 Connected
               </span>
             </div>
           </div>
 
-          <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/50">
-            <h3 className="text-xs uppercase tracking-wide text-muted-foreground mb-3">
+          <div className="surface-card p-5">
+            <h3 className="section-label mb-3">
               Agent insights
             </h3>
             <div className="flex items-start gap-3 p-3 bg-[var(--warning-bg)] rounded-lg">
@@ -47,9 +47,7 @@ export function VitalsScreen() {
             </div>
           </div>
 
-          <br></br>
-
-          <div className="bg-card rounded-2xl p-6 mb-4 shadow-sm border border-border/50">
+          <div className="surface-card-strong p-6 my-4">
             <div className="flex items-center gap-6">
               <div className="relative w-28 h-28">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
@@ -91,8 +89,8 @@ export function VitalsScreen() {
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/50">
-              <h3 className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
+            <div className="surface-card p-5">
+              <h3 className="section-label mb-2">
                 Resting HR
               </h3>
               <div className="flex items-baseline gap-1 mb-1">
@@ -111,8 +109,8 @@ export function VitalsScreen() {
               </div>
             </div>
 
-            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/50">
-              <h3 className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
+            <div className="surface-card p-5">
+              <h3 className="section-label mb-2">
                 HRV
               </h3>
               <div className="flex items-baseline gap-1 mb-1">
@@ -131,8 +129,8 @@ export function VitalsScreen() {
               </div>
             </div>
 
-            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/50">
-              <h3 className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
+            <div className="surface-card p-5">
+              <h3 className="section-label mb-2">
                 Skin temp
               </h3>
               <div className="flex items-baseline gap-1 mb-1">
@@ -142,8 +140,8 @@ export function VitalsScreen() {
               <div className="text-xs text-muted-foreground">normal range</div>
             </div>
 
-            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/50">
-              <h3 className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
+            <div className="surface-card p-5">
+              <h3 className="section-label mb-2">
                 SpO₂
               </h3>
               <div className="flex items-baseline gap-1 mb-1">
@@ -154,9 +152,9 @@ export function VitalsScreen() {
             </div>
           </div>
 
-                    <div className="bg-card rounded-2xl p-5 mb-4 shadow-sm border border-border/50">
+          <div className="surface-card p-5 mb-4">
             <div className="flex items-baseline justify-between mb-3">
-              <h3 className="text-xs uppercase tracking-wide text-muted-foreground">Sleep</h3>
+              <h3 className="section-label">Sleep</h3>
               <span className="text-xs text-muted-foreground">11:42pm - 7:18am</span>
             </div>
             <div className="text-3xl font-medium mb-4">7h 36m</div>

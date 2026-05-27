@@ -50,8 +50,8 @@ const careCircles = [
 
 export function HomeScreen() {
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <div className="max-w-md mx-auto px-5 pt-12">
+    <div className="screen-root">
+      <div className="screen-frame px-5 pt-12">
         <div className="flex items-start justify-between mb-2">
           <div>
             <h1 className="text-[32px] leading-tight">
@@ -59,7 +59,7 @@ export function HomeScreen() {
               <span className="italic" style={{ fontFamily: 'Georgia, serif' }}>Sarah</span>
             </h1>
           </div>
-          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mt-1">
+          <div className="initial-badge w-10 h-10 bg-muted mt-1">
             <span className="text-sm font-medium">SC</span>
           </div>
         </div>
@@ -69,7 +69,7 @@ export function HomeScreen() {
         </p>
 
         <div className="space-y-1">
-          <h2 className="text-xs uppercase tracking-wide text-muted-foreground mb-4">
+          <h2 className="section-label mb-4">
             Your care circles
           </h2>
 
@@ -77,11 +77,11 @@ export function HomeScreen() {
             <Link
               key={circle.id}
               to={`/person/${circle.id}`}
-              className="block bg-card rounded-2xl p-4 mb-3 shadow-sm border border-border/50"
+              className="block surface-card p-4 mb-3 transition-shadow hover:shadow-md"
             >
               <div className="flex items-start gap-3 mb-3">
                 <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                  className="initial-badge w-12 h-12 flex-shrink-0"
                   style={{ backgroundColor: circle.bgColor, color: circle.textColor }}
                 >
                   <span className="text-base font-medium">{circle.initials}</span>
@@ -96,13 +96,13 @@ export function HomeScreen() {
                       </p>
                     </div>
                     <span
-                      className={`text-xs px-2.5 py-1 rounded-full flex items-center gap-1.5 ${
+                      className={`status-pill ${
                         circle.statusColor === 'warning'
-                          ? 'bg-[var(--warning-bg)] text-[var(--warning)]'
-                          : 'bg-[var(--stable-bg)] text-[var(--stable)]'
+                          ? 'status-pill-warning'
+                          : 'status-pill-stable'
                       }`}
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                      <span className="status-pill-dot" />
                       {circle.status}
                     </span>
                   </div>
@@ -112,7 +112,7 @@ export function HomeScreen() {
               <p className="text-sm mb-3 text-foreground/80">{circle.condition}</p>
 
               {circle.metrics && (
-                <div className="bg-secondary/50 rounded-xl p-3 mb-3 flex justify-between gap-4">
+                <div className="surface-subtle p-3 mb-3 flex justify-between gap-4">
                   <div className="flex-1">
                     <div className="text-2xl font-medium mb-0.5">
                       {circle.metrics.pain.value}/{circle.metrics.pain.max}

@@ -64,10 +64,10 @@ export function CircleScreen() {
 
   return (
     <div className="h-screen bg-background flex flex-col">
-      <div className="bg-background/95 backdrop-blur-sm z-10 px-5 py-4 border-b border-border/50">
+      <div className="screen-header">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-sm text-muted-foreground mb-3"
+          className="back-link mb-3"
         >
           <ChevronLeft className="w-4 h-4" />
           Circles
@@ -75,112 +75,120 @@ export function CircleScreen() {
 
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-medium">Sheila's circle</h1>
+            <h1 className="text-xl font-medium mb-1.5">Sheila's circle</h1>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <div className="flex -space-x-2">
                 <div
-                  className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium border-2 border-background"
+                  className="initial-badge w-7 h-7 text-[10px] border-2 border-card"
                   style={{ backgroundColor: '#f5e6d3', color: '#8b6f47' }}
                 >
                   SC
                 </div>
                 <div
-                  className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium border-2 border-background"
+                  className="initial-badge w-7 h-7 text-[10px] border-2 border-card"
                   style={{ backgroundColor: '#d4e8d4', color: '#4a7c59' }}
                 >
                   JM
                 </div>
                 <div
-                  className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium border-2 border-background"
+                  className="initial-badge w-7 h-7 text-[10px] border-2 border-card"
                   style={{ backgroundColor: '#d4e0ed', color: '#4a6b8a' }}
                 >
                   NI
                 </div>
               </div>
-              <span>Sarah · James · Nina · Sheila's assistant</span>
+              <span>Sarah · James · Nina · Assistant</span>
             </div>
           </div>
-          <button className="text-2xl">⋮</button>
+          <button className="w-8 h-8 rounded-full hover:bg-muted/50 flex items-center justify-center transition-colors">
+            <span className="text-xl">⋮</span>
+          </button>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 py-4 pb-28">
-        <div className="max-w-md mx-auto space-y-4">
-          <div className="bg-[repeating-linear-gradient(45deg,#e8e4df,#e8e4df_10px,transparent_10px,transparent_20px)] rounded-lg p-4 text-center">
-            <p className="text-sm text-muted-foreground">shared · today, 9:02am</p>
+      <div className="flex-1 overflow-y-auto px-5 py-6 pb-28">
+        <div className="max-w-md mx-auto space-y-5">
+          <div className="flex justify-center">
+            <div className="bg-muted/50 rounded-full px-4 py-2 text-xs text-muted-foreground backdrop-blur-sm">
+              Today, 9:02am
+            </div>
           </div>
 
           {messages.map((msg) => {
             if (msg.type === 'system') {
               return (
-                <div key={msg.id} className="flex justify-center">
-                  <p className="text-xs text-muted-foreground">{msg.message}</p>
+                <div key={msg.id} className="flex justify-center my-2">
+                  <p className="text-xs text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-full">
+                    {msg.message}
+                  </p>
                 </div>
               );
             }
 
             if (msg.type === 'assistant') {
               return (
-                <div key={msg.id} className="flex gap-2">
+                <div key={msg.id} className="flex gap-3">
                   <div
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0"
+                    className="initial-badge w-8 h-8 text-xs flex-shrink-0"
                     style={{ backgroundColor: msg.bgColor, color: msg.textColor }}
                   >
-                    {msg.initials}
+                    ✦
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-baseline gap-2 mb-1">
-                      <span className="text-xs font-medium text-primary">
-                        ⭐ Sheila's care assistant
+                    <div className="flex items-baseline gap-2 mb-1.5">
+                      <span className="text-xs font-medium text-foreground">
+                        Sheila's care assistant
                       </span>
                       <span className="text-xs text-muted-foreground">{msg.time}</span>
                     </div>
-                    <p className="text-sm mb-2">{msg.message}</p>
-                    {msg.task && (
-                      <div className="bg-accent rounded-lg p-3 border-l-2 border-[var(--warning)]">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <h3 className="text-sm font-medium mb-1">{msg.task.title}</h3>
-                            <p className="text-xs text-muted-foreground">{msg.task.time}</p>
+                    <div className="bg-gradient-to-br from-accent to-secondary/30 rounded-2xl rounded-tl-md px-4 py-3 shadow-sm border border-border/30">
+                      <p className="text-sm leading-relaxed mb-3">{msg.message}</p>
+                      {msg.task && (
+                        <div className="bg-card/80 backdrop-blur-sm rounded-xl p-3.5 border border-border/40 shadow-sm">
+                          <div className="flex items-start justify-between mb-3">
+                            <div>
+                              <h3 className="text-sm font-medium mb-1">{msg.task.title}</h3>
+                              <p className="text-xs text-muted-foreground">{msg.task.time}</p>
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {msg.task.assignees.map((assignee, i) => (
+                              <button
+                                key={i}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                                  assignee === 'James'
+                                    ? 'bg-[var(--stable)] text-white shadow-sm'
+                                    : 'bg-muted text-foreground hover:bg-muted/70'
+                                }`}
+                              >
+                                {assignee === 'James' && <CheckCheck className="w-3 h-3 inline mr-1" />}
+                                {assignee}
+                              </button>
+                            ))}
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          {msg.task.assignees.map((assignee, i) => (
-                            <button
-                              key={i}
-                              className={`px-3 py-1 rounded-lg text-xs ${
-                                assignee === 'James'
-                                  ? 'bg-[var(--stable)] text-white'
-                                  : 'bg-secondary text-secondary-foreground'
-                              }`}
-                            >
-                              {assignee === 'James' && <CheckCheck className="w-3 h-3 inline mr-1" />}
-                              {assignee}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
               );
             }
 
             return (
-              <div key={msg.id} className="flex gap-2">
+              <div key={msg.id} className="flex gap-3">
                 <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0"
+                  className="initial-badge w-8 h-8 text-xs flex-shrink-0"
                   style={{ backgroundColor: msg.bgColor, color: msg.textColor }}
                 >
                   {msg.initials}
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-baseline gap-2 mb-1">
-                    <span className="text-xs font-medium">{msg.sender}</span>
+                  <div className="flex items-baseline gap-2 mb-1.5">
+                    <span className="text-xs font-medium text-foreground">{msg.sender}</span>
                     <span className="text-xs text-muted-foreground">{msg.time}</span>
                   </div>
-                  <div className="bg-primary text-primary-foreground rounded-2xl rounded-tl-sm px-4 py-2 inline-block max-w-[85%]">
-                    <p className="text-sm">{msg.message}</p>
+                  <div className="bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-2xl rounded-tl-md px-4 py-3 inline-block max-w-[85%] shadow-md">
+                    <p className="text-sm leading-relaxed">{msg.message}</p>
                   </div>
                 </div>
               </div>
@@ -189,14 +197,14 @@ export function CircleScreen() {
         </div>
       </div>
 
-      <div className="fixed bottom-20 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border/50 px-5 py-3">
-        <div className="max-w-md mx-auto flex gap-2">
+      <div className="fixed bottom-20 left-0 right-0 bg-card/98 backdrop-blur-md border-t border-border/50 px-5 py-4 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+        <div className="max-w-md mx-auto flex gap-3">
           <input
             type="text"
             placeholder="Message Sheila's circle..."
-            className="flex-1 bg-input-background rounded-full px-4 py-2 text-sm outline-none focus:ring-2 ring-ring"
+            className="flex-1 bg-input-background rounded-full px-5 py-3 text-sm outline-none focus:ring-2 ring-ring/30 transition-all shadow-sm"
           />
-          <button className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+          <button className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-primary/90 text-primary-foreground flex items-center justify-center shadow-md hover:shadow-lg hover:scale-105 transition-all">
             <Send className="w-4 h-4" />
           </button>
         </div>

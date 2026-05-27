@@ -14,35 +14,35 @@ export function DevicesScreen() {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <div className="max-w-md mx-auto">
-        <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 px-5 py-4 border-b border-border/50">
+    <div className="screen-root">
+      <div className="screen-frame">
+        <div className="screen-header">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-sm text-muted-foreground"
+            className="back-link"
           >
             <ChevronLeft className="w-4 h-4" />
             Circles
           </button>
         </div>
 
-        <div className="px-5 pt-6">
+        <div className="screen-content">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl font-medium mb-1">Devices</h1>
               <p className="text-sm text-muted-foreground">Connected sensors & alerts</p>
             </div>
-            <button className="bg-primary text-primary-foreground rounded-full w-10 h-10 flex items-center justify-center">
+            <button className="bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-full w-10 h-10 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
               <Plus className="w-5 h-5" />
             </button>
           </div>
 
           <div className="mb-6">
-            <h2 className="text-xs uppercase tracking-wide text-muted-foreground mb-3">
+            <h2 className="section-label mb-3">
               Connected
             </h2>
 
-            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border/50">
+            <div className="surface-card-strong p-4">
               <div className="flex items-start gap-3 mb-4">
                 <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
                   <div className="w-6 h-6 rounded-full border-2 border-white" />
@@ -55,8 +55,8 @@ export function DevicesScreen() {
                         Sheila's · synced 8:14am · 4 days battery
                       </p>
                     </div>
-                    <span className="text-xs px-2.5 py-1 rounded-full flex items-center gap-1.5 bg-[var(--stable-bg)] text-[var(--stable)]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                    <span className="status-pill status-pill-stable">
+                      <span className="status-pill-dot" />
                       Live
                     </span>
                   </div>
@@ -77,11 +77,11 @@ export function DevicesScreen() {
           </div>
 
           <div className="mb-6">
-            <h2 className="text-xs uppercase tracking-wide text-muted-foreground mb-3">
+            <h2 className="section-label mb-3">
               Threshold alerts
             </h2>
 
-            <div className="bg-card rounded-2xl divide-y divide-border/50 shadow-sm border border-border/50">
+            <div className="surface-card divide-y divide-border/50">
               {alerts.map((alert, index) => (
                 <div key={index} className="flex items-center justify-between p-4">
                   <div className="flex-1">
@@ -100,11 +100,11 @@ export function DevicesScreen() {
           </div>
 
           <div>
-            <h2 className="text-xs uppercase tracking-wide text-muted-foreground mb-3">
+            <h2 className="section-label mb-3">
               Available to add
             </h2>
 
-            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border/50">
+            <div className="surface-card p-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
                   <span className="text-lg font-medium">A</span>
